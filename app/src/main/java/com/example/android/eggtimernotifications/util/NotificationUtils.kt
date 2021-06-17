@@ -27,7 +27,7 @@ import com.example.android.eggtimernotifications.R
 import com.example.android.eggtimernotifications.receiver.SnoozeReceiver
 
 // Notification ID. We use in this always the same id.
-private val NOTIFICATION_ID = 0
+private val NOTIFICATION_ID = 0 // unused?
 private val REQUEST_CODE = 0
 private val FLAGS = 0
 
