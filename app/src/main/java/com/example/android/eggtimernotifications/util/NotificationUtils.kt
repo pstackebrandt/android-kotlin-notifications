@@ -23,10 +23,8 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 import com.example.android.eggtimernotifications.MainActivity
-
 import com.example.android.eggtimernotifications.R
 import com.example.android.eggtimernotifications.receiver.SnoozeReceiver
-import com.example.android.eggtimernotifications.ui.EggTimerFragment
 
 // Notification ID. We use in this always the same id.
 private const val NOTIFICATION_ID = 0 // unused?
@@ -92,11 +90,10 @@ fun NotificationManager.sendNotification(
         applicationContext,
         applicationContext.getString(R.string.egg_notification_channel_id)
     )
-
-        // TODO: Step 1.8 use the new 'breakfast' notification channel
+        // Step 1.8 use the new 'breakfast' notification channel
 
         // Step 1.3 set title, text and icon to builder
-        .setSmallIcon(R.drawable.cooked_egg)
+        .setSmallIcon(R.drawable.cooked_egg) // We call methods of builder!
         .setContentTitle(applicationContext.getString(R.string.notification_title))
         .setContentText(messageBody)
 
@@ -115,7 +112,8 @@ fun NotificationManager.sendNotification(
             snoozePendingIntent
         )
 
-    // TODO: Step 2.5 set priority
+        // Step 2.5 set priority
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
 
     // TODO: Step 1.4 call notify
     /* We can directly call notify since you are performing to call
