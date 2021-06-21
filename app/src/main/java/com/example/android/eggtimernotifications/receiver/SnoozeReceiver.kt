@@ -27,9 +27,11 @@ import android.text.format.DateUtils
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.content.ContextCompat
 
-class SnoozeReceiver: BroadcastReceiver() {
+/** Acts on getting a snooze event. */
+class SnoozeReceiver : BroadcastReceiver() {
     private val REQUEST_CODE = 0
 
+    /** Acts on snooze event. */
     override fun onReceive(context: Context, intent: Intent) {
         val triggerTime = SystemClock.elapsedRealtime() + DateUtils.MINUTE_IN_MILLIS
 
@@ -40,6 +42,7 @@ class SnoozeReceiver: BroadcastReceiver() {
             notifyIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
+
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         AlarmManagerCompat.setExactAndAllowWhileIdle(
             alarmManager,
@@ -47,6 +50,13 @@ class SnoozeReceiver: BroadcastReceiver() {
             triggerTime,
             notifyPendingIntent
         )
+
+        val notificationManager = ContextCompat.getSystemService(
+            context,
+            NotificationManager::class.java
+        ) as NotificationManager
+
+        notificationManager.cancelAll() // remove all old alarms
     }
 
 }

@@ -23,17 +23,20 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 import com.example.android.eggtimernotifications.MainActivity
-//import com.example.android.eggtimernotifications
-
 
 import com.example.android.eggtimernotifications.R
 import com.example.android.eggtimernotifications.receiver.SnoozeReceiver
 import com.example.android.eggtimernotifications.ui.EggTimerFragment
 
 // Notification ID. We use in this always the same id.
-private val NOTIFICATION_ID = 0 // unused?
-private val REQUEST_CODE = 0
-private val FLAGS = 0
+private const val NOTIFICATION_ID = 0 // unused?
+
+/** Request code for pending intent. needed to access the PendingIntent for update or cancel. */
+private const val REQUEST_CODE = 0
+
+/* flag 'one shot' because the intent will be used only once. */
+private const val FLAGS = 0
+
 
 // TODO: Step 1.1 extension function to send messages (GIVEN)
 /**
@@ -42,30 +45,46 @@ private val FLAGS = 0
  * @param messageBody, notification text.
  * @param applicationContext, activity context.
  */
-fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context) {
-    // Create the content intent for the notification, which launches
-    // this activity
-    // Done: Step 1.11 create intent
-    val contentIntent = Intent(applicationContext, MainActivity::class.java)
-    // Done: Step 1.12 create PendingIntent
+fun NotificationManager.sendNotification(
+    messageBody: String,
+    applicationContext: Context
+) {
+    /** Create content intent for notification, which launches this activity
+     *  Done: Step 1.11 */
+    val contentIntent =
+        Intent(applicationContext, MainActivity::class.java) // Intent calls this class
+
+    // Create PendingIntent Done: Step 1.12
     val contentPendingIntent = PendingIntent.getActivity(
         applicationContext,
         NOTIFICATION_ID,
-        contentIntent,
+        contentIntent, // intent of the activity to be launched
         PendingIntent.FLAG_UPDATE_CURRENT
     )
-    // Done: Step 2.0 add style
-    // loading the image from resources
+
+    // Loading the image from resources
+    //  Done: Step 2.0 add style
     val eggImage = BitmapFactory.decodeResource(
         applicationContext.resources,
         R.drawable.cooked_egg
     )
 
+    /* Add picture and icon to notification. Use specific style. */
     val bigPictureStyle = NotificationCompat.BigPictureStyle()
         .bigPicture(eggImage)
         .bigLargeIcon(null)
 
     // TODO: Step 2.2 add snooze action
+    val snoozeIntent = Intent(applicationContext, SnoozeReceiver::class.java)
+    val snoozePendingIntent: PendingIntent = PendingIntent.getBroadcast(
+        applicationContext,
+        REQUEST_CODE,
+        snoozeIntent,
+        FLAGS
+    )
+
+    /** To quick the action, enter notification will disappear after the first step,
+     * which is why the intent can only be used once. */
 
     // Done: Step 1.2 get an instance of NotificationCompat.Builder
     // Build the notification
@@ -76,18 +95,25 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
 
         // TODO: Step 1.8 use the new 'breakfast' notification channel
 
-        // Done: Step 1.3 set title, text and icon to builder
+        // Step 1.3 set title, text and icon to builder
         .setSmallIcon(R.drawable.cooked_egg)
         .setContentTitle(applicationContext.getString(R.string.notification_title))
         .setContentText(messageBody)
 
-        // Done: Step 1.13 set content intent
+        // Step 1.13 set content intent
         .setContentIntent(contentPendingIntent)
         .setAutoCancel(true)
-        // TODO: Step 2.1 add style to builder
+
+        // Step 2.1 add style to builder
         .setStyle(bigPictureStyle)
         .setLargeIcon(eggImage)
-    // TODO: Step 2.3 add snooze action
+
+        // Step 2.3 add snooze action
+        .addAction(
+            R.drawable.egg_icon,
+            applicationContext.getString(R.string.snooze),
+            snoozePendingIntent
+        )
 
     // TODO: Step 2.5 set priority
 
